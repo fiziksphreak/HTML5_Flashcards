@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+		<title>Flashcards</title>
+		<meta name="description" content="" />
+		<meta name="author" content="fiziksphreak" />
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+		
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="css/flashcard.css">
+		
+		<style type="text/css">
+			body {
+				padding-top: 60px;
+				padding-bottom: 40px;
+			}
+			.sidebar-nav {
+				padding: 9px 0;
+			}
+			
+	         /* Sticky footer styles
+	         -------------------------------------------------- */
+	
+	         html,
+	         body {
+	           height: 100%;
+	           /* The html and body elements cannot have any padding or margin. */
+	         }
+	         
+	         #canvas_body {
+	         	padding-bottom: 40px;
+	         }
+	         
+	         #flashcards_header {
+	         	text-align: center;
+	         }
+	
+	         /* Wrapper for page content to push down footer */
+	         #wrap {
+	           min-height: 100%;
+	           height: auto !important;
+	           height: 100%;
+	           /* Negative indent footer by it's height */
+	           margin: 0 auto -60px;
+	         }
+	
+	         /* Set the fixed height of the footer here */
+	         #push,
+	         #footer {
+	           height: 30px;
+	         }
+	         #footer {
+	           background-color: #EEEEEE;
+	           position: fixed;
+	           bottom: 0;
+	           left: 0;
+	           right: 0;
+	           text-align: center;
+	         }
+	
+	         /* Lastly, apply responsive CSS fixes as necessary */
+	         @media (max-width: 980px) {
+				.navbar-text.pull-right {
+					float: none;
+					padding-left: 5px;
+					padding-right: 5px;
+				}
+	           #footer {
+	             margin-left: -20px;
+	             margin-right: -20px;
+	             padding-left: 20px;
+	             padding-right: 20px;
+	           }
+	         }
+		</style>
+		
+		<link href="../css/bootstrap-responsive.css" rel="stylesheet">
+		
+	</head>
+	<body onload="loadInit()">
+	
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="brand" href="#">Flashcards</a>
+					<div class="nav-collapse collapse">
+						<ul class="nav">
+							<li><a href="http://fiziksphreak.com">Home</a></li>
+							<li><a href="http://fiziksphreak.com/about">About</a></li>
+							<li><a href="http://fiziksphreak.com/contact">Contact</a></li>
+							<li class="active"><a href="http://flashcards.fiziksphreak.com">Flashcards</a></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+		
+		<div class="container-fluid" id="canvas_body">
+			<div class="row-fluid">
+				<div class="span2">
+					<div class="well sidebar-nav">
+						<ul class="nav nav-list">
+							<li class="nav-header">Select A Deck</li>
+							<li>
+								<form>
+									<select class="span12" id="class_select" name="users" onchange="getClass(this.value)">
+										<option value="">Select a class:</option>
+									</select>
+								</form>
+							</li>
+							<li>
+								<form>
+									<select class="span12" id="deck_select" name="users" onchange="getCards(this.value)">
+										<option value="">Select a deck:</option>
+									</select>
+								</form>
+							</li>
+							<li class="nav-header">Select An Activity</li>
+							<li><a href="#">Games</a></li>
+							<li><a href="#">Flashcards</a></li>
+							<li><a href="#">Vocabulary</a></li>
+							<li><a href="#">Lesson</a></li>
+						</ul>
+					</div><!--/.well -->
+					<div class="well sidebar-nav">
+						<ul class="nav nav-list">
+							<li class="nav-header">Select A Set Size</li>
+							<li>
+								<form>
+									<select class="span12" id="count_select" name="users" onchange="setCount(this.value)">
+										<option value="">Select a size:</option>
+										<option value="5">Sets of 5</option>
+										<option value="10">Sets of 10</option>
+										<option value="20">Sets of 20</option>
+										<option value="100">Entire deck</option>
+									</select>
+								</form>
+							</li>
+							<li>
+								<form>
+									<select class="span12" id="set_select" name="users" onchange="setSelect(this.value)">
+										<option value="">Select a set:</option>
+										<option value="5">Sets of 5</option>
+										<option value="10">Sets of 10</option>
+										<option value="20">Sets of 20</option>
+										<option value="100">Entire deck</option>
+									</select>
+								</form>
+							</li>
+							<li class="nav-header">Select A Game</li>
+							<li>
+								<form>
+									<select class="span12" id="game_select" name="users" onchange="setGame(this.value)">
+										<option value="">Select a game:</option>
+										<option value="1">Memory</option>
+										<option value="2">Crossword</option>
+										<option value="3">Scramble</option>
+										<option value="4">Shoot em\'</option>
+									</select>
+								</form>
+							</li>
+						</ul>
+					</div><!--/.well -->
+				</div><!--/span-->
+			
+				<div class="span9">
+					<div class="flashcard_div">
+						<h2 id="flashcards_header">Flashcards</h2>
+						
+						<table id="flashcard" onclick="rotateYDIV()">
+							<tr>
+								<td id="card_count">0 of 0</td>
+							</tr>
+							<tr>
+								<td id="inner_text">FRONT</td>
+							</tr>
+						</table>
+						
+						<button class="btn btn-primary" id="next_button" onclick="nextCard()">Next</button>
+						<br>
+						<div id="txtHint"><b>Person info will be listed here.</b></div>
+					</div>
+					<div id="flashcard_canvas"></div>
+				</div><!--/span-->
+			</div>
+		</div><!--/row-->
+
+		<div id="footer">
+			<div class="container">
+				<p>
+					&copy; Copyright  by Fiziksphreak Mobilesoft
+				</p>
+			</div>
+		</div>
+	
+
+		
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    	<script src="js/bootstrap.js"></script>
+		<script>
+			var backvar="notset";
+			
+			function local_refresh () {
+				$.get("php/variables.php", function(data, status){backvar=data;});
+				return backvar;
+			}
+		</script>
+		<script src="php/db_conn.php"></script>
+		<script src="js/kinetic-v4.5.4.min.js"></script>
+		<script src="js/flashcard_canvas.js"></script>
+		<script src="js/flashcard.js"></script>
+	</body>
+</html>
